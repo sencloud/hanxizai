@@ -50,7 +50,8 @@ AGED_GRAIN = 3.2
 # src: 原图文件名（默认与 id 相同）；crop: 只取原图的 [x0, x1) 竖条
 # mirror: 生成图朝向与原作相反时左右翻转（在 crop 之后；parts/anchors 按翻转后的坐标写）
 # head: 'auto' 按肤色定位并拆出头层；False 不拆（群像、舞者、手与乐器贴着脸）
-# parts: 额外可动部件 {名: {poly, pivot}}
+# parts: 额外可动部件 {名: {poly, pivot, clear?}}；clear 内身体层直接留空而不补底
+#        （部件背后本来就是空处，如扇面），头层会让开所有部件
 # anchors: 供烟、光与交互吸附的点（原图像素）；atlas_anchors: 同上，但直接写图集像素
 # hue: 换色变体 [(h0, h1, s_min, 目标色相, 饱和系数)]，色相为 OpenCV 0..180
 SPEC = {
@@ -113,9 +114,11 @@ SPEC = {
                           hue=[(0, 7, 110, 17, 0.55), (172, 180, 110, 17, 0.55)]),
     'f-lady':        dict(kind='fig', head='auto'),
     'f-han-fan':     dict(kind='fig', head='auto',
-                          parts={'fan': dict(poly=[(188, 194), (338, 194), (338, 372), (302, 378),
-                                                   (292, 462), (264, 462), (262, 378), (188, 370)],
-                                             pivot=(280, 444))}),
+                          parts={'fan': dict(poly=[(210, 220), (384, 220), (384, 400), (330, 406),
+                                                   (328, 524), (302, 524), (298, 410), (210, 418)],
+                                             clear=[(206, 216), (388, 216), (388, 398), (298, 404),
+                                                    (206, 416)],
+                                             pivot=(308, 436))}),
     'f-maid-fan':    dict(kind='fig', head='auto'),
     'f-maid-back':   dict(kind='fig', head='auto'),
     # 其五 · 送别
@@ -327,18 +330,30 @@ def build(name, spec, debug):
             poly, pivot = head_poly(face, opts)
             parts['head'] = dict(poly=poly, pivot=pivot)
     for pn, p in spec.get('parts', {}).items():
-        parts[pn] = dict(poly=p['poly'], pivot=p['pivot'])
+        parts[pn] = dict(poly=p['poly'], pivot=p['pivot'], clear=p.get('clear'))
 
     # 拆层：部件从原画剪下，身体在挖空处补底
     layers = {}
     body_col, body_a = col.copy(), alpha.copy()
+    others = np.zeros(alpha.shape, bool)
+    for pn, p in parts.items():
+        if pn != 'head':
+            others |= poly_mask(alpha.shape, p['poly'])
     for pn, p in parts.items():
         region = poly_mask(alpha.shape, p['poly'])
+        if pn == 'head':
+            region &= ~others
         pa = np.where(region, alpha, 0.0)
         if pa.max() < 0.05:
             continue
         layers[pn] = (col.copy(), pa)
-        body_col, body_a = inpaint(body_col, body_a, region & (alpha > 0.02))
+        fill = region & (alpha > 0.02)
+        if p.get('clear'):
+            empty = region & poly_mask(alpha.shape, p['clear'])
+            body_a[empty] = 0
+            fill &= ~empty
+        if fill.any():
+            body_col, body_a = inpaint(body_col, body_a, fill)
 
     # 统一裁边（身体与部件共用同一坐标系）
     union = body_a.copy()
