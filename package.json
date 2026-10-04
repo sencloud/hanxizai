@@ -1,0 +1,12 @@
+{
+  "name": "hanxizai-night-revels",
+  "version": "1.0.0",
+  "private": true,
+  "description": "《韩熙载夜宴图》可漫游互动长卷：按原作逐段生成的分层素材 + Canvas 2D + WebGL + Web Audio，无框架、无构建。",
+  "scripts": {
+    "test": "node tests/logic.test.cjs",
+    "preview": "python scripts/preview.py",
+    "build:figures": "python scripts/build_figures.py",
+    "compare": "python scripts/compose_layout.py"
+  }
+}
