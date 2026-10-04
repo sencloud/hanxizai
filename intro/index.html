@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>韩熙载夜宴图 · 可漫游的互动长卷</title>
+<meta name="description" content="把五代顾闳中的《韩熙载夜宴图》还原成一段可以走进去的夜宴：五段长卷、烛影更漏、共同乐谱与 28 则批注。原生 JavaScript，无框架、无构建。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="韩熙载夜宴图 · 可漫游的互动长卷">
+<meta property="og:description" content="五段夜宴，烛影从掌灯摇到天将明。Canvas 2D + WebGL + Web Audio，无框架、无构建。">
+<meta property="og:image" content="https://singz.cn/hanxizai/docs/promo/05-github-social-preview.png">
+<meta name="theme-color" content="#171310">
+<link rel="icon" href="../favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<style>
+:root{
+  --ink:#211a14;
+  --ink-soft:#5d5044;
+  --paper:#e9dfc8;
+  --paper-deep:#d6c6a4;
+  --line:rgba(90,72,52,.22);
+  --vermilion:#9e3b2e;
+  --gold:#ab8341;
+  --serif:"Songti SC","STSong","Source Han Serif SC","Noto Serif SC","SimSun",serif;
+  --sans:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  line-height:1.95;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(150,120,80,.10), transparent 42%),
+    radial-gradient(circle at 88% 92%, rgba(150,120,80,.12), transparent 46%);
+}
+img{max-width:100%;display:block;}
+a{color:var(--vermilion);text-decoration:none;border-bottom:1px solid rgba(158,59,46,.35);}
+a:hover{border-bottom-color:var(--vermilion);}
+
+.wrap{max-width:960px;margin:0 auto;padding:0 24px;}
+
+/* 封面 */
+.hero{
+  position:relative;
+  min-height:clamp(480px,78vh,820px);
+  display:flex;
+  align-items:flex-end;
+  background:#171310;
+  overflow:hidden;
+}
+.hero img.hero-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:.85;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(16,12,9,.55) 0%,rgba(16,12,9,.15) 38%,rgba(16,12,9,.92) 100%);
+}
+.hero .inner{
+  position:relative;z-index:2;width:100%;
+  max-width:960px;margin:0 auto;padding:0 24px 64px;
+  color:var(--paper);
+}
+.hero h1{
+  margin:0;
+  font-size:clamp(34px,6.4vw,68px);
+  font-weight:400;
+  letter-spacing:.22em;
+  text-shadow:0 2px 22px rgba(0,0,0,.65);
+}
+.hero .rule{width:180px;height:2px;background:var(--gold);margin:22px 0 20px;}
+.hero .sub{font-size:clamp(15px,2.1vw,21px);letter-spacing:.14em;color:#f0e6d0;}
+.hero .meta{margin-top:8px;font-size:14px;letter-spacing:.12em;color:rgba(236,224,200,.72);}
+.hero .acts{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;}
+.btn{
+  display:inline-block;
+  padding:12px 26px;
+  border:1px solid rgba(232,220,196,.5);
+  border-radius:2px;
+  color:var(--paper);
+  letter-spacing:.18em;
+  font-size:15px;
+  transition:background .25s ease,color .25s ease,border-color .25s ease;
+}
+.btn:hover{background:var(--paper);color:var(--ink);border-color:var(--paper);}
+.btn.primary{background:var(--vermilion);border-color:var(--vermilion);}
+.btn.primary:hover{background:#b8462f;border-color:#b8462f;color:#fff8ea;}
+
+/* 正文 */
+section{padding:74px 0 8px;}
+section:last-of-type{padding-bottom:40px;}
+h2{
+  margin:0 0 6px;
+  font-size:clamp(22px,3.4vw,32px);
+  font-weight:400;
+  letter-spacing:.2em;
+}
+.kicker{
+  margin:0 0 26px;
+  font-size:13px;
+  letter-spacing:.42em;
+  color:var(--vermilion);
+  font-family:var(--sans);
+}
+p{margin:0 0 18px;font-size:16.5px;color:#33291f;}
+.lede{font-size:19px;color:#2a2118;}
+
+.figure{margin:34px 0;}
+.figure img{
+  border:1px solid var(--line);
+  border-radius:3px;
+  background:#1b1511;
+  box-shadow:0 18px 40px -26px rgba(40,28,16,.75);
+}
+.figure figcaption{
+  margin-top:10px;
+  font-size:13px;
+  letter-spacing:.1em;
+  color:var(--ink-soft);
+  font-family:var(--sans);
+  text-align:center;
+}
+
+.scenes{
+  list-style:none;margin:6px 0 0;padding:0;
+  border-top:1px solid var(--line);
+}
+.scenes li{
+  display:flex;gap:20px;align-items:baseline;
+  padding:16px 4px;
+  border-bottom:1px solid var(--line);
+}
+.scenes .idx{
+  flex:0 0 auto;
+  font-size:12px;letter-spacing:.32em;color:var(--gold);
+  font-family:var(--sans);
+}
+.scenes .name{flex:0 0 5.4em;font-size:19px;letter-spacing:.16em;}
+.scenes .note{color:var(--ink-soft);font-size:15px;}
+
+.grid{
+  display:grid;gap:18px;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  margin:26px 0 6px;
+}
+.card{
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:20px 22px 18px;
+  background:rgba(255,250,238,.5);
+}
+.card h3{margin:0 0 8px;font-size:17px;font-weight:400;letter-spacing:.12em;}
+.card p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.85;}
+
+pre{
+  margin:22px 0;
+  padding:16px 20px;
+  background:rgba(58,44,30,.07);
+  border-left:2px solid var(--gold);
+  border-radius:2px;
+  font-family:ui-monospace,Consolas,monospace;
+  font-size:13.5px;
+  line-height:1.8;
+  color:#3b2f22;
+  overflow-x:auto;
+}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.93em;background:rgba(58,44,30,.07);padding:1px 5px;border-radius:2px;}
+pre code{background:none;padding:0;}
+
+.thanks{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:8px;padding:22px 0 6px;}
+.thanks dt{font-size:16px;letter-spacing:.1em;margin-top:14px;}
+.thanks dd{margin:6px 0 0;color:var(--ink-soft);font-size:14.5px;font-family:var(--sans);line-height:1.85;}
+
+footer{
+  margin-top:40px;
+  padding:34px 0 56px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  font-size:13.5px;
+  font-family:var(--sans);
+}
+footer p{margin:0 0 8px;font-size:13.5px;color:var(--ink-soft);}
+
+@media (max-width:640px){
+  section{padding:52px 0 4px;}
+  .scenes li{flex-wrap:wrap;gap:6px 14px;}
+  .scenes .name{flex:0 0 auto;}
+  .hero{min-height:clamp(420px,72vh,600px);}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img class="hero-bg" src="../docs/promo/06-hero-still.png" alt="《韩熙载夜宴图》互动长卷的听乐一段">
+  <div class="inner">
+    <h1>韩熙载夜宴图</h1>
+    <div class="rule"></div>
+    <p class="sub">可漫游的互动夜宴长卷</p>
+    <p class="meta">听乐 · 观舞 · 歇息 · 清吹 · 送别　|　烛影从掌灯摇到天将明</p>
+    <div class="acts">
+      <a class="btn primary" href="../index.html">进入长卷</a>
+      <a class="btn" href="https://github.com/sencloud/hanxizai">GitHub 仓库</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="what">
+    <p class="kicker">其一</p>
+    <h2>这是什么</h2>
+    <p class="lede">《韩熙载夜宴图》是手卷，高 28.7 厘米，三米多长，从右往左看。在展柜前看真迹，人是一段一段往左挪的；换到屏幕上，高清图给了你放大，却把「挪」这件事去掉了。</p>
+    <p>这个页面把「挪」还回来：一条可以一直走到底的长卷，五段之间用屏风隔开，人物在动、烛火在摇、香烟在升，走到卷尾落款用印。它不下载任何外部资源，打开就能跑。</p>
+    <div class="figure">
+      <img src="../docs/promo/04-roam.gif" alt="沿长卷漫游的动图：从听乐一路走到送别，烛光由明转暗">
+      <figcaption>沿卷漫游：镜头从右端的听乐开卷，一路向左，天色与烛火同时变暗</figcaption>
+    </div>
+  </section>
+
+  <section id="scenes">
+    <p class="kicker">其二</p>
+    <h2>五段</h2>
+    <p>原作横向的每一个像素都对应世界坐标：<code>worldX = (原图 x − 4080) × 1.8</code>。观众不是在五张图之间跳转，而是沿同一条轴走完整卷；屏风既是陈设，也是段落之间的「幕」。</p>
+    <ul class="scenes">
+      <li><span class="idx">其一</span><span class="name">听乐</span><span class="note">李家小妹抱琵琶，满堂屏息。点琵琶可以拨弦，满堂随乐声起伏。</span></li>
+      <li><span class="idx">其二</span><span class="name">观舞</span><span class="note">王屋山踏六幺，主人亲擂羯鼓。按住鼓面蓄力、松开击鼓，鼓点合度则舞步更快，过猛会乱了半步。</span></li>
+      <li><span class="idx">其三</span><span class="name">歇息</span><span class="note">宴罢暂歇，主人洗手，侍女环坐。点烛火可以剪烛花，托盘侍女会把茶点送到床前再回来。</span></li>
+      <li><span class="idx">其四</span><span class="name">清吹</span><span class="note">五女横笛，主人袒衣执扇。点乐女起拍收拍，笛声按画面位置左右分开。</span></li>
+      <li><span class="idx">其五</span><span class="name">送别</span><span class="note">曲终人散，主人执槌作别。走到卷尾，落款用印。</span></li>
+    </ul>
+    <div class="figure">
+      <img src="../docs/promo/02-five-scenes.png" alt="五段总览：听乐、观舞、歇息、清吹、送别，以及更漏时间轴">
+      <figcaption>五段总览。右下是更漏：掌灯 → 烛明 → 烛影摇红 → 香尽 → 更残漏尽 → 天将明</figcaption>
+    </div>
+  </section>
+
+  <section id="how">
+    <p class="kicker">其三</p>
+    <h2>怎么做的</h2>
+    <p>画中每一个人、每一件床榻屏风，都按原作同一位置的局部重新生成为分层素材，再摆回原画上的同一个框里：位置、朝向、衣色、前后遮挡与原作一致。</p>
+    <div class="grid">
+      <div class="card">
+        <h3>版式对齐</h3>
+        <p>以原作全卷（12,172 × 500）为基准，42 张生成图经抠底、做旧、按肤色调头、拆出可动部件（鼓槌、团扇、拨弦的手），得到 47 件运行时素材。每件素材都记着它在原画上占的那一框。</p>
+      </div>
+      <div class="card">
+        <h3>一条时间轴</h3>
+        <p>更漏从掌灯走到天将明，推演出的量同时作用在火光、香烟、色调与声音上；静止的床榻与活动的人物共用同一层氛围着色，每支烛还各自的熄灭时刻错开。</p>
+      </div>
+      <div class="card">
+        <h3>同一份乐谱</h3>
+        <p>配乐是一支 D 宫五声调式的小曲（64 拍一轮）。琵琶女在起音上拨弦，乐女在句末换气，宾客应节击掌——人物动作与音乐读的是同一份谱。</p>
+      </div>
+      <div class="card">
+        <h3>看原图</h3>
+        <p>右下角可以打开全卷原作，画上 28 则批注把旧说与推断分开写；在长卷里点到同一处，也能「入画」回到对应的位置。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="elsewhere">
+    <p class="kicker">其四</p>
+    <h2>三种做法</h2>
+    <p>同一个题材，浏览器里已经有两种很不一样的答案。这个项目的取舍是第三种。</p>
+    <div class="figure">
+      <img src="../docs/promo/03-compare-three.png" alt="三方对照：qingming-riverside、ErkinCao 的夜宴图、以及本项目">
+      <figcaption>三个项目分别放弃了不同的东西，也都换回了不同的东西</figcaption>
+    </div>
+    <dl class="thanks">
+      <dt><a href="https://github.com/xianxie6/qingming-riverside">xianxie6/qingming-riverside</a></dt>
+      <dd>把《清明上河图》做成可交互的宋代沿河街市。从它这里借到的是方法：横向世界坐标、静止底图叠活动图层、步态绑定位移而非时间、给人排时间轴、把互动做成状态机加物理量。这个项目的「更漏」「六幺舞」都照着同一套骨架写。</dd>
+      <dt><a href="https://github.com/ErkinCao/han-xizai-night-revels">ErkinCao/han-xizai-night-revels</a></dt>
+      <dd>同一个题材的另一种答案：用公共领域扫描与 DZI 瓦片做一座可以查证的数字博物馆，57 个热点、十条导览、还有画卷身世与纪念票。它把「哪些是画面观察、哪些是文献记载、哪些是推测」分得很清楚，也老实写明哪些还没有验收——这一点比多放几个效果难得。</dd>
+    </dl>
+  </section>
+
+  <section id="run">
+    <p class="kicker">其五</p>
+    <h2>怎么看</h2>
+    <p>在线直接打开：<a href="../index.html">进入长卷</a>。想在本地跑也一样简单——没有构建，没有网络请求，素材元数据是普通脚本，贴图用 <code>&lt;img&gt;</code> 加载：</p>
+    <pre><code>git clone https://github.com/sencloud/hanxizai.git
+cd hanxizai
+# 直接双击 index.html，或起一个本地服务：
+python scripts/preview.py</code></pre>
+    <p>手机也能看：单指左右拖动漫游，双指捏合缩放，竖屏时界面收进上下两条暗带，刘海与手势条都按 <code>env(safe-area-inset-*)</code> 让开。</p>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p>原画为五代顾闳中（宋摹本），现藏故宫博物院。项目里的人物与陈设有别于原作的裁切：它们以原作局部为参考重新生成，再经流水线做旧、拆层，因此笔触与原作不同，构图、人物关系与设色按原作摆放。</p>
+  <p>代码以 MIT 许可发布。绢地、立柱、大屏风、鼓架、烛台、火光、香烟与声音由代码生成。</p>
+  <p><a href="https://github.com/sencloud/hanxizai">github.com/sencloud/hanxizai</a> · <a href="../index.html">进入长卷</a></p>
+</footer>
+
+</body>
+</html>

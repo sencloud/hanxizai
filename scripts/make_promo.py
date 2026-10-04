@@ -264,6 +264,14 @@ def animation(frames, out, fps=7, width=782):
     return out
 
 
+def hero_still(frames, out):
+    """介绍页的题图：不带任何文字的画心，供网页做背景。"""
+    im = Image.open(os.path.join(frames, "still-listen.png")).convert("RGB")
+    im = im.resize((1600, int(im.height * 1600 / im.width)), Image.LANCZOS)
+    im.save(out, optimize=True)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--frames", required=True)
@@ -277,6 +285,7 @@ def main():
         compare(args.frames, os.path.join(args.out, "03-compare-three.png")),
         social(args.frames, os.path.join(args.out, "05-github-social-preview.png")),
         animation(args.frames, os.path.join(args.out, "04-roam.gif")),
+        hero_still(args.frames, os.path.join(args.out, "06-hero-still.png")),
     ]
     for m in made:
         if m:
