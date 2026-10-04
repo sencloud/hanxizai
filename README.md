@@ -1,6 +1,6 @@
 # 韩熙载夜宴图 · 可漫游的夜宴长卷
 
-**在线体验**：<https://singz.cn/hanxizai/> · [项目介绍页](https://singz.cn/hanxizai/intro/) · 无框架、无构建、无网络请求，双击 `index.html` 也能跑
+**在线体验**：<https://sencloud.github.io/hanxizai/> · [项目介绍页](https://sencloud.github.io/hanxizai/intro/) · 无框架、无构建、无网络请求，双击 `index.html` 也能跑
 
 An interactive, walkable handscroll of *Han Xizai's Night Revels* (五代 · 顾闳中): five scenes, candle-lit ambience, a shared score, 28 annotations. Vanilla JavaScript — Canvas 2D + WebGL + Web Audio, no framework, no build step, no external assets.
 
