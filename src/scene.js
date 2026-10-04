@@ -868,6 +868,8 @@
 
     ctx = dom.scroll.getContext('2d');
     if (root.location.hash.indexOf('nosmoke') >= 0) dom.smoke.style.display = 'none';
+    // 截图用：隐藏全部界面层，只留画心（index.html#shot&x=8400&warp=30）
+    if (root.location.hash.indexOf('shot') >= 0) document.body.classList.add('shot');
     plate = PL.build();
     bank = new SP.Bank(HX.figureAtlas);
     // 贴图未就绪时按矢量轮廓画剪影，就绪后自然替换

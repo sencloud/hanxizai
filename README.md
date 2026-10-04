@@ -1,5 +1,9 @@
 # 韩熙载夜宴图 · 可漫游的夜宴长卷
 
+**在线体验**：<https://singz.cn/hanxizai/> · 无框架、无构建、无网络请求，双击 `index.html` 也能跑
+
+An interactive, walkable handscroll of *Han Xizai's Night Revels* (五代 · 顾闳中): five scenes, candle-lit ambience, a shared score, 28 annotations. Vanilla JavaScript — Canvas 2D + WebGL + Web Audio, no framework, no build step, no external assets.
+
 把五代顾闳中的《韩熙载夜宴图》从一张静止的手卷，还原成一段可以走进去的夜宴：长卷自右向左展开，依次是听乐、观舞、歇息、清吹、送别，烛影从掌灯一直摇到天将明。
 
 画中每一个人、每一件床榻屏风，都按原作同一位置的局部重新生成为分层素材，再摆回原画上的同一个框里：位置、朝向、衣色、前后遮挡与原作一致。
@@ -113,3 +117,7 @@ node tests/logic.test.cjs
 ## 关于这幅画
 
 原画为五代顾闳中（宋摹本），现藏故宫博物院。本项目的人物与陈设不是原作的裁切：它们以原作局部为参考重新生成，再经流水线做旧、拆层，因此笔触与原作不同，但构图、人物关系与设色按原作摆放。绢地、立柱、大屏风、鼓架、烛台、火光、香烟与声音由代码生成。
+
+## 许可
+
+代码以 MIT 许可发布，见 [LICENSE](LICENSE)。原画为五代顾闳中（宋摹本），已属公共领域；`img/` 中的全卷图用作版式基准，`assets/figures/raw/` 是按原作局部重绘的生成图。

@@ -309,6 +309,16 @@ body{
   border:0;
 }
 
+/* #shot：只留画心，供截图与合成用（不参与正常浏览） */
+body.shot .hud,
+body.shot .chapter,
+body.shot .controls,
+body.shot .sections,
+body.shot .tools,
+body.shot .hint{
+  display:none !important;
+}
+
 @media (max-width:640px){
   .hud-title{max-width:70vw;}
   .chapter{bottom:calc(clamp(120px,20vh,180px) + var(--sab));max-width:70vw;}
