@@ -84,6 +84,7 @@ src/original.js          看原图：全卷查看、朱印批注、展开的批�
 src/scene.js             相机、输入、命中测试、绘制循环与界面
 scripts/build_figures.py 素材流水线：抠底、做旧、分件、换色、拆层、矢量遮罩
 scripts/compose_layout.py 版式校验：把素材按 layout.js 合成，与原作上下对照
+scripts/build_icons.py   站点图标：一方朱印「夜」，输出 favicon.ico 与 assets/icons/
 tests/                   逻辑自测（不需要浏览器）
 docs/DESIGN.md           设计说明：从《清明上河图》互动项目借来的方法
 docs/ASSETS.md           素材清单：每件素材的出处框、生成方式与加工
@@ -96,7 +97,10 @@ pip install pillow numpy scipy opencv-python
 python scripts/build_figures.py            # 全部重建（约 3 分钟），--only l-han,d-drum 只建几件
 python scripts/build_figures.py --debug    # 另存每件素材的检查图到 assets/figures/debug/
 python scripts/compose_layout.py           # 重新生成 docs/compare-*.jpg
+python scripts/build_icons.py              # 重新生成站点图标（用到 Windows 自带的隶书字体）
 ```
+
+生成图的朝向和原作相反时，在 `build_figures.py` 的 SPEC 里加 `mirror=True`（如捧盆的侍女 `r-maid-front`），流水线会先翻转再抠底拆层。
 
 ## 自测
 

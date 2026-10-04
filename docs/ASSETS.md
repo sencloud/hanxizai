@@ -74,7 +74,7 @@
 | `r-couch` | 榻 | 6878, 38, 7405, 472 | r-couch | — | 静止，z 1 |
 | `r-han` | 韩熙载，坐榻洗手 | 6978, 135, 7098, 322 | r-han | 头层；部件 hands | wash |
 | `r-women` | 榻上三位女子 | 7034, 64, 7266, 292 | r-women | 群像，不拆头 | murmur |
-| `r-maid-front` | 捧盆的侍女 | 7068, 196, 7162, 468 | r-maid-front | 头层 | idle |
+| `r-maid-front` | 捧盆的侍女 | 7068, 196, 7162, 468 | r-maid-front | 左右翻转（生成图朝右，原作朝左向韩熙载捧盆）；头层 | idle |
 | `r-pipa-girl` | 抱琵琶的女子 | 7505, 88, 7632, 418 | r-pipa-girl | 乐器贴脸，不拆头 | idle |
 | `r-tray-maid` | 托盘的侍女 | 7608, 192, 7732, 442 | r-tray-maid | 托盘贴脸，不拆头 | tray（走到床前再回来） |
 
