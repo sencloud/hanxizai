@@ -272,6 +272,27 @@ def hero_still(frames, out):
     return out
 
 
+def wechat_card(frames, out):
+    """微信／社交卡片用的方图。
+
+    微信的链接卡片是方形缩略图，抓的是页面里尺寸够大的图片，
+    所以这张要独立成图，而不是拿横向的社交预览去裁。
+    """
+    size = 600
+    hero = Image.open(os.path.join(frames, "still-dance.png")).convert("RGB")
+    canvas = fit_image(hero, (size, size)).convert("RGBA")
+    scrim(canvas, (0, 0, size, size), (14, 11, 9), 26, 40)
+    scrim(canvas, (0, int(size * 0.5), size, size), (14, 11, 9), 0, 238)
+
+    d = ImageDraw.Draw(canvas)
+    draw_spaced(d, (44, size - 178), "韩熙载夜宴图", font(SERIF, 46), PAPER, spacing=4)
+    d.line([(46, size - 120), (196, size - 120)], fill=GOLD + (200,), width=2)
+    d.text((46, size - 102), "可漫游的互动夜宴长卷", font=font(SANS, 22), fill=(236, 224, 200))
+    seal(canvas, (size - 118, size - 152), 74)
+    canvas.convert("RGB").save(out, optimize=True)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--frames", required=True)
@@ -286,6 +307,7 @@ def main():
         social(args.frames, os.path.join(args.out, "05-github-social-preview.png")),
         animation(args.frames, os.path.join(args.out, "04-roam.gif")),
         hero_still(args.frames, os.path.join(args.out, "06-hero-still.png")),
+        wechat_card(args.frames, os.path.join(args.out, "07-share-card.png")),
     ]
     for m in made:
         if m:

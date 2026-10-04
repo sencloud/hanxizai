@@ -7,6 +7,17 @@
 <meta name="description" content="《韩熙载夜宴图》互动长卷：沿屏风逐段漫游，听乐、观舞、歇息、清吹、送别，看烛影从掌灯摇到更残。">
 <title>韩熙载夜宴图 · 可漫游的夜宴长卷</title>
 <meta name="theme-color" content="#171310">
+<!-- 分享卡片：微信抓的是页面里尺寸够大的图片，而本页是纯画布、没有可见图片，
+     所以下面放一张 300×300 的缩略图专门给抓取用；og 标签供其他平台使用。 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="韩熙载夜宴图">
+<meta property="og:title" content="韩熙载夜宴图 · 可漫游的夜宴长卷">
+<meta property="og:description" content="五段夜宴：听乐、观舞、歇息、清吹、送别，烛影从掌灯摇到天将明。点开就能走进去。">
+<meta property="og:url" content="https://sencloud.github.io/hanxizai/">
+<meta property="og:image" content="https://sencloud.github.io/hanxizai/docs/promo/07-share-card.png">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
@@ -14,6 +25,8 @@
 </head>
 <body>
 <div id="stage" class="stage">
+  <img class="share-thumb" src="docs/promo/07-share-card.png" width="300" height="300"
+       alt="韩熙载夜宴图 · 可漫游的夜宴长卷" aria-hidden="true">
   <canvas id="scroll" class="layer scroll" role="img"
     aria-label="《韩熙载夜宴图》互动长卷：听乐、观舞、歇息、清吹、送别五段。"></canvas>
   <canvas id="smoke" class="layer smoke" aria-hidden="true"></canvas>
