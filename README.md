@@ -121,3 +121,9 @@ node tests/logic.test.cjs
 ## 许可
 
 代码以 MIT 许可发布，见 [LICENSE](LICENSE)。原画为五代顾闳中（宋摹本），已属公共领域；`img/` 中的全卷图用作版式基准，`assets/figures/raw/` 是按原作局部重绘的生成图。
+
+## 其他
+
+如果你喜欢我的项目，可以给我买杯咖啡：
+
+<img src="https://github.com/user-attachments/assets/e75ef971-ff56-41e5-88b9-317595d22f81" alt="image" width="300" height="300">
